@@ -63,7 +63,9 @@ public class HttpUtil {
                     }
                 }
             };
-            httppost.setEntity(new UrlEncodedFormEntity(params));
+            if (params != null) {
+                httppost.setEntity(new UrlEncodedFormEntity(params));
+            }
             response = httpclient.execute(httppost, responseHandler);
         } catch (IOException ex) {
             Logger.getLogger(TournamentImpl.class.getName()).log(Level.SEVERE, null, ex);
