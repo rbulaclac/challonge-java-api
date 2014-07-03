@@ -24,7 +24,7 @@ import rbulaclac.challonge.api.wrapper.impl.TournamentImpl;
  * Hello world!
  *
  */
-public class Util {
+public class HttpUtil {
 
     public static String doGet(HttpClient httpclient, String url) {
         String response = "";

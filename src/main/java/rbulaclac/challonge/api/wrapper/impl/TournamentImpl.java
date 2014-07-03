@@ -14,7 +14,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
-import rbulaclac.challonge.api.wrapper.Util;
+import rbulaclac.challonge.api.wrapper.HttpUtil;
 
 /**
  *
@@ -49,7 +49,7 @@ public class TournamentImpl {
             url += "&subdomain=" + subdomain;
         }
 
-        return Util.doGet(httpclient, url);
+        return HttpUtil.doGet(httpclient, url);
     }
 
     public void postCreate(String api_key, String name, String type, String url, String subdomain, String description, boolean open_signup,
@@ -64,7 +64,7 @@ public class TournamentImpl {
         String url = baseUrl + "tournaments/" + tournament +".json?api_key=" + api_key +
                 "&include_participants=" + include_participants + "&include_matches=" + include_matches;
         System.out.println(url);
-        return Util.doGet(httpclient, url);
+        return HttpUtil.doGet(httpclient, url);
     }
 
     public void putUpdate(String api_key, String name, String type, String url, String subdomain, String description, boolean open_signup,
