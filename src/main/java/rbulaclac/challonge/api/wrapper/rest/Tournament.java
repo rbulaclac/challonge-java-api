@@ -3,7 +3,6 @@ package rbulaclac.challonge.api.wrapper.rest;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -31,12 +30,7 @@ public class Tournament {
     Logger logger = Logger.getLogger("Tournament");
 
     public Tournament() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-        SSLContextBuilder builder = new SSLContextBuilder();
-        builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        httpclient = HttpClients.custom().setSSLSocketFactory(
-                sslsf).build();
+        httpclient = HttpClients.createDefault();
         tournament = new TournamentImpl(httpclient, "https://api.challonge.com/v1/");
     }
 
@@ -45,12 +39,13 @@ public class Tournament {
     @Path("/index")
     public String index(
             @QueryParam("api_key") String api_key,
+            @DefaultValue("") @QueryParam("format") String format,
             @DefaultValue("") @QueryParam("state") String state,
             @DefaultValue("") @QueryParam("type") String type,
             @DefaultValue("") @QueryParam("created_after") String created_after,
             @DefaultValue("") @QueryParam("created_before") String created_before,
             @DefaultValue("") @QueryParam("subdomain") String subdomain) {
-        return tournament.getIndex(api_key, state, type, created_after, created_before, subdomain);
+        return tournament.getIndex(api_key, format, state, type, created_after, created_before, subdomain);
     }
 
     @POST
@@ -64,36 +59,58 @@ public class Tournament {
     public String show(
             @QueryParam("api_key") String api_key,
             @QueryParam("tournament") String tournamentId,
+            @DefaultValue("") @QueryParam("format") String format,
             @DefaultValue("0") @QueryParam("include_participants") int include_participants,
             @DefaultValue("0") @QueryParam("include_matches") int include_matches) {
         if (api_key.isEmpty() || tournamentId.isEmpty() || api_key == null || tournamentId == null) {
             return "API Key or Tournament field is empty. Both are required.";
         }
-        return tournament.getShow(api_key, tournamentId, include_participants, include_matches);
+        return tournament.getShow(api_key, tournamentId, format, include_participants, include_matches);
     }
 
     @PUT
     @Path("/update")
     public void update() {
+
     }
 
     @DELETE
     @Path("/destroy")
-    public void destroy() {
+    public String destroy(
+            @QueryParam("api_key") String api_key,
+            @QueryParam("tournament") String tournamentId,
+            @DefaultValue("") @QueryParam("format") String format) {
+        return tournament.deleteDestroy(api_key, tournamentId, format);
     }
 
     @POST
     @Path("/start")
-    public void start() {
+    public String start(
+            @QueryParam("api_key") String api_key,
+            @QueryParam("tournament") String tournamentId,
+            @DefaultValue("") @QueryParam("format") String format,
+            @DefaultValue("0") @QueryParam("include_participants") int include_participants,
+            @DefaultValue("0") @QueryParam("include_matches") int include_matches) {
+        return tournament.postStart(api_key, tournamentId, format, include_participants, include_matches);
     }
 
     @POST
     @Path("/finalize")
-    public void finalizeTournament() {
+    public String finalizeTournament(
+            @QueryParam("api_key") String api_key,
+            @QueryParam("tournament") String tournamentId,
+            @DefaultValue("") @QueryParam("format") String format,
+            @DefaultValue("0") @QueryParam("include_participants") int include_participants) {
+        return tournament.postFinalize(api_key, tournamentId, format, include_participants);
     }
 
     @POST
     @Path("/reset")
-    public void reset() {
+    public String reset(
+            @QueryParam("api_key") String api_key,
+            @QueryParam("tournament") String tournamentId,
+            @DefaultValue("") @QueryParam("format") String format,
+            @DefaultValue("0") @QueryParam("include_participants") int include_participants) {
+        return tournament.postReset(api_key, tournamentId, format, include_participants);
     }
 }

@@ -1,7 +1,6 @@
 package rbulaclac.challonge.api.wrapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +15,6 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import rbulaclac.challonge.api.wrapper.impl.TournamentImpl;
 
@@ -89,7 +87,9 @@ public class HttpUtil {
                     }
                 }
             };
-            put.setEntity(new UrlEncodedFormEntity(params));
+            if (params != null) {
+                put.setEntity(new UrlEncodedFormEntity(params));
+            }
             response = httpclient.execute(put, responseHandler);
         } catch (IOException ex) {
             Logger.getLogger(TournamentImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -97,7 +97,7 @@ public class HttpUtil {
         return response;
     }
 
-    public static String doDelete(HttpClient httpclient, String url, List<NameValuePair> params) {
+    public static String doDelete(HttpClient httpclient, String url) {
         String response = "";
         try {
             HttpDelete delete = new HttpDelete(url);
